@@ -1,0 +1,33 @@
+name: AKS Scaling
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your main branch name
+  pull_request:
+    branches:
+      - main  # Adjust this to your main branch name
+
+jobs:
+  scale-aks-nodes:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/cli@v1
+      with:
+        azcliversion: 2.0.72
+
+    - name: Login to Azure
+      run: az login --service-principal -u ${{ secrets.AZURE_SP_APP_ID }} -p ${{ secrets.AZURE_SP_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+    - name: Scale AKS nodes up
+      run: az aks scale --resource-group <YourResourceGroup> --name <YourAKSClusterName> --node-count <DesiredNodeCount>
+
+    # Add any additional steps or actions you may need, such as deploying your application.
+
+    - name: Logout from Azure
+      run: az logout
