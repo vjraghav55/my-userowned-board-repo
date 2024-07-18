@@ -26,37 +26,47 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Get latest tag
-      id: get-latest-tag
+    - name: 'Get tag'
+      id: tag
+      uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
+
+    - name: Set correct environment
       run: |
-        latest_tag=$(git tag --list 'uat_v*' | sort -V | tail -n 1 || true)
-        if [ -z "$latest_tag" ]; then
-          echo "No existing tags found with prefix 'uat_v'. Setting initial version."
-          latest_tag="uat_v1.0.0"
-        fi
-        echo "Latest tag: $latest_tag"
-        echo "::set-output name=tag::$latest_tag"
+        TAG=${{ steps.tag.outputs.tag }}
+        echo "TAG=$TAG" >> "$GITHUB_ENV"
+        echo $GITHUB_ENV
 
-    - name: Calculate next tag
-      id: calculate-next-tag
-      run: |
-        # Extract current version
-        IFS='_' read -r _ version <<< "$latest_tag"
-        IFS='.' read -r major minor patch <<< "${version#v}"
+    # - name: Get latest tag
+    #   id: get-latest-tag
+    #   run: |
+    #     latest_tag=$(git tag --list 'uat_v*' | sort -V | tail -n 1 || true)
+    #     if [ -z "$latest_tag" ]; then
+    #       echo "No existing tags found with prefix 'uat_v'. Setting initial version."
+    #       latest_tag="uat_v1.0.0"
+    #     fi
+    #     echo "Latest tag: $latest_tag"
+    #     echo "::set-output name=tag::$latest_tag"
 
-        # Increment patch version
-        patch=$((patch + 1))
+    # - name: Calculate next tag
+    #   id: calculate-next-tag
+    #   run: |
+    #     # Extract current version
+    #     IFS='_' read -r _ version <<< "$latest_tag"
+    #     IFS='.' read -r major minor patch <<< "${version#v}"
 
-        # Create next tag
-        next_tag="uat_v$major.$minor.$patch"
+    #     # Increment patch version
+    #     patch=$((patch + 1))
 
-        echo "Next tag: $next_tag"
-        echo "::set-output name=tag::$next_tag"
+    #     # Create next tag
+    #     next_tag="uat_v$major.$minor.$patch"
 
-    - name: Display tags
-      run: |
-        echo "Latest tag: ${{ steps.get-latest-tag.outputs.tag }}"
-        echo "Next tag: ${{ steps.calculate-next-tag.outputs.tag }}"
+    #     echo "Next tag: $next_tag"
+    #     echo "::set-output name=tag::$next_tag"
+
+    # - name: Display tags
+    #   run: |
+    #     echo "Latest tag: ${{ steps.get-latest-tag.outputs.tag }}"
+    #     echo "Next tag: ${{ steps.calculate-next-tag.outputs.tag }}"
 
     # - name: Create and push tag
     #   run: |
