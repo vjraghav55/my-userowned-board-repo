@@ -8,8 +8,8 @@ on:
         required: true
         type: choice
         options:
-          - uat
-          - prod
+          - main
+          - feature
 
 jobs:
   dispatch:
