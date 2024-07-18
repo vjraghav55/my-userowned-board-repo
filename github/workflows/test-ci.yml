@@ -1,0 +1,56 @@
+name: Manual Dispatch Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Target branch to push the tag'
+        required: true
+        type: choice
+        options:
+          - main
+          - feature
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.branch }}
+
+    - name: Set up Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Get latest tag
+      id: get-latest-tag
+      run: |
+        latest_tag=$(git tag --list 'uat_v*' | sort -V | tail -n 1)
+        echo "Latest tag: $latest_tag"
+        echo "::set-output name=tag::$latest_tag"
+
+    - name: Calculate next tag
+      id: calculate-next-tag
+      run: |
+        latest_tag=${{ steps.get-latest-tag.outputs.tag }}
+        if [ -z "$latest_tag" ]; then
+          next_tag="uat_v1.0.0"
+        else
+          IFS='_' read -r _ version <<< "$latest_tag"
+          IFS='.' read -r major minor patch <<< "${version#v}"
+          patch=$((patch + 1))
+          next_tag="uat_v$major.$minor.$patch"
+        fi
+        echo "Next tag: $next_tag"
+        echo "::set-output name=tag::$next_tag"
+
+    - name: Create and push tag
+      run: |
+        next_tag=${{ steps.calculate-next-tag.outputs.tag }}
+        git tag $next_tag
+        echo $next_tag
+        # git push origin $next_tag --force
