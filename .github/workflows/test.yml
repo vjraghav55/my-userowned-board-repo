@@ -1,4 +1,4 @@
-name: Manual Dispatch Workflow
+name: Tag Dispatch
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ on:
           - 'uat_v*'
 
 jobs:
-  dispatch:
+  tag-dispatch:
     runs-on: ubuntu-latest
 
     steps:
