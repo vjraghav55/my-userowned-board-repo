@@ -53,9 +53,14 @@ jobs:
         echo "Next tag: $next_tag"
         echo "::set-output name=tag::$next_tag"
 
-    - name: Create and push tag
+    - name: Display tags
       run: |
-        next_tag=${{ steps.calculate-next-tag.outputs.tag }}
-        git tag $next_tag
-        echo $next_tag
-        # git push origin $next_tag --force
+        echo "Latest tag: ${{ steps.get-latest-tag.outputs.tag }}"
+        echo "Next tag: ${{ steps.calculate-next-tag.outputs.tag }}"
+
+    # - name: Create and push tag
+    #   run: |
+    #     next_tag=${{ steps.calculate-next-tag.outputs.tag }}
+    #     git tag $next_tag
+    #     echo "Created tag: $next_tag"
+    #     # git push origin $next_tag --force
