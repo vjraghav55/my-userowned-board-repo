@@ -2,20 +2,20 @@ name: Tag Dispatch
 
 on:
   workflow_dispatch:
-    # inputs:
-    #   branch:
-    #     description: 'Target branch to push the tag'
-    #     required: true
-    #     type: choice
-    #     options:
-    #       - main
-    #       - feature
+    inputs:
+      branch:
+        description: 'Target branch to push the tag'
+        required: true
+        type: choice
+        options:
+          - main
+          - feature
 
-  push:
-    # branches:
-    #   - dev-test
-        tags:
-          - 'uat_v*'
+  # push:
+  #   # branches:
+  #   #   - dev-test
+  #       tags:
+  #         - 'uat_v*'
 
 jobs:
   tag-dispatch:
@@ -25,7 +25,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
+        fetch-depth: 0
         ref: ${{ github.event.inputs.branch }}
+        submodules: true
 
     - name: Set up Git
       run: |
@@ -37,14 +39,17 @@ jobs:
       run: |
         git fetch --tags
         echo "Tags fetched"      
+    
     - name: Get Latest Tag
       id: latest-tag
       run: |
         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "Latest tag is: $latest_tag"
+        echo "::set-output name=LATEST_TAG::$latest_tag"
 
-    - name: 'Get tag'
-      id: tag
-      uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
+    # - name: 'Get tag'
+    #   id: tag
+    #   uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
 
     - name: Increment tag
       run: |
@@ -61,47 +66,3 @@ jobs:
     #     git tag "$next_tag"
     #     git push origin "$next_tag"
 
-    # - name: Set correct environment
-    #   run: |
-    #     TAG=${{ steps.tag.outputs.tag }}
-    #     echo "TAG=$TAG" >> "$GITHUB_ENV"
-    #     echo $GITHUB_ENV
-
-    # - name: Get latest tag
-    #   id: get-latest-tag
-    #   run: |
-    #     latest_tag=$(git tag --list 'uat_v*' | sort -V | tail -n 1 || true)
-    #     if [ -z "$latest_tag" ]; then
-    #       echo "No existing tags found with prefix 'uat_v'. Setting initial version."
-    #       latest_tag="uat_v1.0.0"
-    #     fi
-    #     echo "Latest tag: $latest_tag"
-    #     echo "::set-output name=tag::$latest_tag"
-
-    # - name: Calculate next tag
-    #   id: calculate-next-tag
-    #   run: |
-    #     # Extract current version
-    #     IFS='_' read -r _ version <<< "$latest_tag"
-    #     IFS='.' read -r major minor patch <<< "${version#v}"
-
-    #     # Increment patch version
-    #     patch=$((patch + 1))
-
-    #     # Create next tag
-    #     next_tag="uat_v$major.$minor.$patch"
-
-    #     echo "Next tag: $next_tag"
-    #     echo "::set-output name=tag::$next_tag"
-
-    # - name: Display tags
-    #   run: |
-    #     echo "Latest tag: ${{ steps.get-latest-tag.outputs.tag }}"
-    #     echo "Next tag: ${{ steps.calculate-next-tag.outputs.tag }}"
-
-    # - name: Create and push tag
-    #   run: |
-    #     next_tag=${{ steps.calculate-next-tag.outputs.tag }}
-    #     git tag $next_tag
-    #     echo "Created tag: $next_tag"
-    #     # git push origin $next_tag --force
