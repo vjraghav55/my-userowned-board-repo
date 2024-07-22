@@ -34,10 +34,10 @@ jobs:
         git config user.name "vjraghav55"
         git config user.email "vjraghav55@gmail.com"
 
-    - name: Get Tags
-      id: tags
-      run: |
-        git fetch --tags
+    # - name: Get Tags
+    #   id: tags
+    #   run: |
+    #     git fetch --tags
     
     - name: Get Latest Tag
       id: latest-tag
@@ -50,18 +50,13 @@ jobs:
       run: |
         echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
 
-    # - name: 'Get tag'
-    #   id: tag
-    #   uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
-
     - name: Increment tag
       run: |
         # Extract the tag from the output
-        previous_tag="${{ steps.tag.outputs.tag }}"
+        previous_tag="${{ steps.latest-tag.outputs.LATEST_TAG }}"
         
         # Increment the tag version (assuming it follows uat_vX.Y.Z format)
-        next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')
-        
+        next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')    
         echo "Next tag: $next_tag"
         echo "$next_tag"
         
