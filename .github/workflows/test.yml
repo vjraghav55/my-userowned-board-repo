@@ -31,15 +31,6 @@ jobs:
         ref: ${{ github.event.inputs.branch }}
         submodules: true
 
-    # - name: Set up Git
-    #   run: |
-    #     git config user.name "vjraghav55"
-    #     git config user.email "vjraghav55@gmail.com"
-
-    # - name: Get Tags
-    #   id: tags
-    #   run: |
-    #     git fetch --tags
     
     - name: Get Latest Tag
       id: latest-tag
@@ -47,10 +38,6 @@ jobs:
         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
         echo "Latest tag is: $latest_tag"
         echo "::set-output name=LATEST_TAG::$latest_tag"
-    
-    - name: Verify Latest Tag
-      run: |
-        echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
 
     - name: Increment tag
       id: increment-tag
@@ -60,12 +47,12 @@ jobs:
         
         # Increment the tag version 
         next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')    
-        echo "Next tag: $next_tag"
+        echo "Next_tag: $next_tag"
         
     - name: Push new tag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git tag "$next_tag"
+        git tag $Next_tag
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git --tags
 
