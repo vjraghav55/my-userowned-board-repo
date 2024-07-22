@@ -60,7 +60,7 @@ jobs:
         echo "Next tag: $next_tag"
         echo "$next_tag"
         
-    #     # Use the incremented tag
-    #     git tag "$next_tag"
-    #     git push origin "$next_tag"
+        # Use the incremented tag
+        git tag "$next_tag"
+        git push origin "$next_tag"
 
