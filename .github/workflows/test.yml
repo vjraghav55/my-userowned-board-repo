@@ -32,6 +32,16 @@ jobs:
         git config user.name "vjraghav55"
         git config user.email "vjraghav55@gmail.com"
 
+    - name: Get Tags
+      id: tags
+      run: |
+        git fetch --tags
+        echo "Tags fetched"      
+    - name: Get Latest Tag
+      id: latest-tag
+      run: |
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+
     - name: 'Get tag'
       id: tag
       uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
