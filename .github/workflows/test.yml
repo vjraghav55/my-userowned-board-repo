@@ -2,20 +2,11 @@ name: Tag Dispatch
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Target branch to push the tag'
-        required: true
-        type: choice
-        options:
-          - main
-          - feature
-
-  # push:
-  #   # branches:
-  #   #   - dev-test
-  #       tags:
-  #         - 'uat_v*'
+  push:
+    # branches:
+    #   - dev-test
+        tags:
+          - 'uat_v*'
 
 jobs:
   tag-dispatch:
