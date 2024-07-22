@@ -38,7 +38,6 @@ jobs:
       id: tags
       run: |
         git fetch --tags
-        echo "Tags fetched"      
     
     - name: Get Latest Tag
       id: latest-tag
@@ -46,6 +45,10 @@ jobs:
         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
         echo "Latest tag is: $latest_tag"
         echo "::set-output name=LATEST_TAG::$latest_tag"
+    
+    - name: Verify Latest Tag
+      run: |
+        echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
 
     # - name: 'Get tag'
     #   id: tag
