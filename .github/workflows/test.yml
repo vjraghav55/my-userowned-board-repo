@@ -20,6 +20,8 @@ on:
 jobs:
   tag-dispatch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
 
     steps:
     - name: Checkout repository
@@ -29,10 +31,10 @@ jobs:
         ref: ${{ github.event.inputs.branch }}
         submodules: true
 
-    - name: Set up Git
-      run: |
-        git config user.name "vjraghav55"
-        git config user.email "vjraghav55@gmail.com"
+    # - name: Set up Git
+    #   run: |
+    #     git config user.name "vjraghav55"
+    #     git config user.email "vjraghav55@gmail.com"
 
     # - name: Get Tags
     #   id: tags
@@ -51,16 +53,19 @@ jobs:
         echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
 
     - name: Increment tag
+      id: increment-tag
       run: |
         # Extract the tag from the output
         previous_tag="${{ steps.latest-tag.outputs.LATEST_TAG }}"
         
-        # Increment the tag version (assuming it follows uat_vX.Y.Z format)
+        # Increment the tag version 
         next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')    
         echo "Next tag: $next_tag"
-        echo "$next_tag"
         
-        # Use the incremented tag
-        git tag "$next_tag"
-        git push origin "$next_tag"
+    - name: Push new tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git tag "${{ steps.increment-tag.outputs.NEXT_TAG }}"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git --tags
 
