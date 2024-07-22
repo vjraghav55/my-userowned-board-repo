@@ -1,6 +1,7 @@
 name: Tag Verify
 
-on:
+on: 
+  workflow_dispatch:
   push:
     tags:
       - 'uat_v*' 
