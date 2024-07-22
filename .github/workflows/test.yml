@@ -66,6 +66,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git tag "${{ steps.increment-tag.outputs.NEXT_TAG }}"
+        git tag "$next_tag"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git --tags
 
