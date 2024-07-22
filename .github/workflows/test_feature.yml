@@ -3,10 +3,10 @@ name: Tag Verify
 on:
   push:
     tags:
-      - 'uat_v*' # Adjust the pattern to match your tags
+      - 'uat_v*' 
 
 jobs:
-  tag-dispatch:
+  tag-verify:
     runs-on: ubuntu-latest
 
     steps:
