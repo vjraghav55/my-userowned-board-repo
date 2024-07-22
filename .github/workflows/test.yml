@@ -1,0 +1,70 @@
+name: Tag Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Target branch to push the tag'
+        required: true
+        type: choice
+        options:
+          - main
+          - feature
+
+  # push:
+  #   # branches:
+  #   #   - dev-test
+  #       tags:
+  #         - 'uat_v*'
+
+jobs:
+  tag-dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.inputs.branch }}
+        submodules: true
+
+    - name: Set up Git
+      run: |
+        git config user.name "vjraghav55"
+        git config user.email "vjraghav55@gmail.com"
+
+    - name: Get Tags
+      id: tags
+      run: |
+        git fetch --tags
+    
+    - name: Get Latest Tag
+      id: latest-tag
+      run: |
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "Latest tag is: $latest_tag"
+        echo "::set-output name=LATEST_TAG::$latest_tag"
+    
+    - name: Verify Latest Tag
+      run: |
+        echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
+
+    # - name: 'Get tag'
+    #   id: tag
+    #   uses: 'WyriHaximus/github-action-get-previous-tag@8a0e045f02c0a3a04e1452df58b90fc7e555e950'
+
+    - name: Increment tag
+      run: |
+        # Extract the tag from the output
+        previous_tag="${{ steps.tag.outputs.tag }}"
+        
+        # Increment the tag version (assuming it follows uat_vX.Y.Z format)
+        next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')
+        
+        echo "Next tag: $next_tag"
+        echo "$next_tag"
+        
+    #     # Use the incremented tag
+    #     git tag "$next_tag"
+    #     git push origin "$next_tag"
