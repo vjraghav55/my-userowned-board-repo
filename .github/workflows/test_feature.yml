@@ -1,10 +1,9 @@
 name: Tag Verify
 
 on:
-  workflow_dispatch:
   push:
-        tags:
-          - 'uat_v*'
+    tags:
+      - 'uat_v*' # Adjust the pattern to match your tags
 
 jobs:
   tag-dispatch:
@@ -19,7 +18,6 @@ jobs:
         submodules: true
 
     - name: Get Tags
-      id: tags
       run: |
         git fetch --tags
     
@@ -38,5 +36,3 @@ jobs:
       id: branch
       run: |
         echo "Execution is from feature branch"
-
-
