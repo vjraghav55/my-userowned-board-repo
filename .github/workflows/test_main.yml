@@ -31,24 +31,25 @@ jobs:
           git config --global user.email 'vjraghav55@gmail.com'
         
     - name: Fetch all tags
-      run: git fetch origin ${{ github.event.inputs.branch }} --tags
-      
-    - name: Get Latest Tag
-      id: latest-tag
+      run: git tag --merged ${{ github.event.inputs.branch }}
+
+    - name: 'Get Previous tag'
+      id: previoustag
       run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-        echo "Latest tag is: $latest_tag"
-        echo "::set-output name=LATEST_TAG::$latest_tag"
-        
+        TAG=$(git tag -l "tag_v*" | sort -V --reverse | sed -n 1p)
+        echo "::set-output name=tag::${TAG}"
+        [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
+    
     - name: Increment tag
       id: increment-tag
       run: |
         # Extract the tag from the output
-        previous_tag="${{ steps.latest-tag.outputs.LATEST_TAG }}"
+        previous_tag="${{ steps.previoustag.outputs.tag }}"
         
-        # Increment the tag version 
-        next_tag=$(echo "$previous_tag" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')    
-        echo "Next_tag: $next_tag"
+        # Increment the last digit of the tag version
+        next_tag=$(echo "$previous_tag" | awk -F. '{$NF = $NF + 1} 1' OFS=.)
+        
+        echo "Next tag: $next_tag"
         echo "::set-output name=NEXT_TAG::$next_tag"
         
     - name: Push new tag
@@ -58,3 +59,15 @@ jobs:
         next_tag="${{ steps.increment-tag.outputs.NEXT_TAG }}"
         git tag $next_tag
         git push origin $next_tag
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          tag_name: $next_tag
+          release_name: $next_tag
+          body: 'Description of the release'
+          draft: false
+          prerelease: false
