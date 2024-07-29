@@ -1,37 +1,21 @@
 name: Tag Verify
 
+# on: 
+#   workflow_dispatch:
+#   push:
+#     tags:
+#       - 'uat_v*' 
 on: 
-  workflow_dispatch:
-  push:
-    tags:
-      - 'uat_v*' 
+  release: 
+    types: 
+      - created
+      - released
 
 jobs:
   tag-verify:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: feature
-        submodules: true
-
-    - name: Get Tags
-      run: |
-        git fetch --tags
-    
-    - name: Get Latest Tag
-      id: latest-tag
-      run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-        echo "Latest tag is: $latest_tag"
-        echo "::set-output name=LATEST_TAG::$latest_tag"
-    
-    - name: Verify Latest Tag
-      run: |
-        echo "Verified latest tag: ${{ steps.latest-tag.outputs.LATEST_TAG }}"
 
     - name: Get branch
       id: branch
