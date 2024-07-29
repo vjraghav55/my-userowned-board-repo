@@ -25,11 +25,6 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.inputs.branch }}
         submodules: true
-    
-    # - name: Set up Git
-    #   run: |
-    #       git config --global user.name 'vjraghav55'
-    #       git config --global user.email 'vjraghav55@gmail.com'
 
     - name: Fetch tags
       run: git fetch --tags
@@ -37,10 +32,25 @@ jobs:
     - name: Current branch
       run: git branch
 
-    - name: 'Get Previous tag'
-      id: previoustag
+    - name: Set up the branch and tag variables
+      id: setup_vars
       run: |
-        TAG=$(git tag -l "feattest_*" | sort -V --reverse | sed -n 1p)
+        BRANCH=${{ github.event.inputs.branch }}
+        if [ "$BRANCH" = "feature-test" ]; then
+          TAG_PREFIX="feattest_*"
+        elif [ "$BRANCH" = "feature" ]; then
+          TAG_PREFIX="feat_*"
+        else
+          exit
+        fi
+        echo "::set-output name=branch::$BRANCH"
+        echo "::set-output name=tag_prefix::$TAG_PREFIX"
+
+    - name: Get Previous tag
+      id: previoustag
+      if: steps.setup_vars.outputs.tag_prefix != ''
+      run: |
+        TAG=$(git tag -l "${{ steps.setup_vars.outputs.tag_prefix }}" | sort -V --reverse | sed -n 1p)
         echo "::set-output name=tag::${TAG}"
         [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
     
