@@ -41,7 +41,7 @@ jobs:
         elif [ "$BRANCH" = "feature" ]; then
           TAG_PREFIX="feat_*"
         else
-          exit
+          exit 1
         fi
         echo "::set-output name=branch::$BRANCH"
         echo "::set-output name=tag_prefix::$TAG_PREFIX"
