@@ -46,7 +46,7 @@ jobs:
     - name: 'Get Previous tag'
       id: previoustag
       run: |
-        TAG=$(git describe --tags --abbrev=0)
+        TAG="$(git describe --tags --abbrev=0)"
         echo "::set-output name=tag::${TAG}"
     
     - name: Increment tag
