@@ -25,10 +25,10 @@ jobs:
         ref: ${{ github.event.inputs.branch }}
         submodules: true
     
-    - name: Set up Git
-      run: |
-          git config --global user.name 'vjraghav55'
-          git config --global user.email 'vjraghav55@gmail.com'
+    # - name: Set up Git
+    #   run: |
+    #       git config --global user.name 'vjraghav55'
+    #       git config --global user.email 'vjraghav55@gmail.com'
 
     - name: Fetch tags
       run: git fetch --tags
