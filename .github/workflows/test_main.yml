@@ -39,9 +39,9 @@ jobs:
     - name: 'Get Previous tag'
       id: previoustag
       run: |
-        TAG="$(git describe --tags --abbrev=0)"
+        TAG=$(git tag -l "feat_*" | sort -V --reverse | sed -n 1p)
         echo "::set-output name=tag::${TAG}"
-        echo "tag"
+        [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
     
     - name: Increment tag
       id: increment-tag
