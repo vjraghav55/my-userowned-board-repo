@@ -8,7 +8,7 @@ name: Tag Verify
 on: 
   release: 
     types: 
-      - created
+      # - created
       - released
 
 jobs:
