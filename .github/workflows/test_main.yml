@@ -30,18 +30,24 @@ jobs:
           git config --global user.name 'vjraghav55'
           git config --global user.email 'vjraghav55@gmail.com'
 
-    - name: git branch
+    - name: Fetch tags
       run: git tag --merged ${{ github.event.inputs.branch }}         
         
-    - name: Fetch all tags
+    - name: Current branch
       run: git branch
+
+    # - name: 'Get Previous tag'
+    #   id: previoustag
+    #   run: |
+    #     TAG=$(git tag -l "main_*" | sort -V --reverse | sed -n 1p)
+    #     echo "::set-output name=tag::${TAG}"
+    #     [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
 
     - name: 'Get Previous tag'
       id: previoustag
       run: |
-        TAG=$(git tag -l "main_*" | sort -V --reverse | sed -n 1p)
+        TAG=$(git describe --tags --abbrev=0)
         echo "::set-output name=tag::${TAG}"
-        [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
     
     - name: Increment tag
       id: increment-tag
