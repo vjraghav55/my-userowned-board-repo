@@ -17,6 +17,25 @@ jobs:
 
     steps:
 
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: feature
+        submodules: true
+
+    - name: 'Get Previous tag'
+      id: previoustag
+      run: |
+        TAG=$(git tag -l "feat_*" | sort -V --reverse | sed -n 1p)
+        echo "::set-output name=tag::${TAG}"
+        [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
+
+    - name: Set correct environment
+      run: |
+        TAG=${{ steps.tag.outputs.tag }}
+        echo "TAG=$TAG" >> "$GITHUB_ENV"
+        echo "$GITHUB_ENV"
+
     - name: Get branch
       id: branch
       run: |
