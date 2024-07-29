@@ -41,6 +41,7 @@ jobs:
       run: |
         TAG="$(git describe --tags --abbrev=0)"
         echo "::set-output name=tag::${TAG}"
+        echo "tag"
     
     - name: Increment tag
       id: increment-tag
