@@ -36,7 +36,7 @@ jobs:
     - name: 'Get Previous tag'
       id: previoustag
       run: |
-        TAG=$(git tag -l "tag_v*" | sort -V --reverse | sed -n 1p)
+        TAG=$(git tag -l "feat_*" | sort -V --reverse | sed -n 1p)
         echo "::set-output name=tag::${TAG}"
         [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
     
@@ -53,6 +53,7 @@ jobs:
         echo "::set-output name=NEXT_TAG::$next_tag"
         
     - name: Push new tag
+      id: get_tag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -66,8 +67,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          tag_name: $next_tag
-          release_name: $next_tag
+          tag_name: ${{ steps.get_tag.outputs.next_tag }}
+          release_name: ${{ steps.get_tag.outputs.next_tag }}
           body: 'Description of the release'
           draft: false
           prerelease: false
