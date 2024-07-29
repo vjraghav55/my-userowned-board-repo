@@ -53,7 +53,6 @@ jobs:
         echo "::set-output name=NEXT_TAG::$next_tag"
         
     - name: Push new tag
-      id: get_tag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -61,14 +60,18 @@ jobs:
         git tag $next_tag
         git push origin $next_tag
 
+    - name: Determine Tag Name
+      id: get_tag
+      run: echo "::set-output name=tag_name::$(git describe --tags --abbrev=0)"
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          tag_name: ${{ steps.get_tag.outputs.next_tag }}
-          release_name: ${{ steps.get_tag.outputs.next_tag }}
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          release_name: ${{ steps.get_tag.outputs.tag_name }}
           body: 'Description of the release'
           draft: false
           prerelease: false
