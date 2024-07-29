@@ -34,7 +34,12 @@ jobs:
       run: |
         TAG=${{ steps.previoustag.outputs.tag }}
         echo "TAG=$TAG" >> "$GITHUB_ENV"
-        echo $GITHUB_ENV
+
+    - name: Echo TAG from GITHUB_ENV
+      run: |
+        # echo "TAG=$TAG"
+        # echo "Echo from GITHUB_ENV:"
+        cat "$GITHUB_ENV"
 
     - name: Get branch
       id: branch
