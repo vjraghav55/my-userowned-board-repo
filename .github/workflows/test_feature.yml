@@ -1,10 +1,5 @@
 name: Tag Verify
 
-# on: 
-#   workflow_dispatch:
-#   push:
-#     tags:
-#       - 'uat_v*' 
 on: 
   release: 
     types: 
