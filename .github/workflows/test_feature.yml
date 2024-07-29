@@ -9,6 +9,7 @@ on:
 jobs:
   tag-verify:
     runs-on: ubuntu-latest
+    if: env.branch =='refs/heads/feature-test'
 
     steps:
 
@@ -21,7 +22,7 @@ jobs:
     - name: 'Get Previous tag'
       id: previoustag
       run: |
-        TAG=$(git tag -l "feat_*" | sort -V --reverse | sed -n 1p)
+        TAG=$(git tag -l "feattest_*" | sort -V --reverse | sed -n 1p)
         echo "::set-output name=tag::${TAG}"
         [[ -z "${TAG}" ]] && echo "No tag found..." || echo "Tag found: ${TAG}"
 
