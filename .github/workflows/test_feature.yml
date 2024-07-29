@@ -9,7 +9,6 @@ on:
 jobs:
   tag-verify:
     runs-on: ubuntu-latest
-    if: env.branch =='refs/heads/feature'
 
     steps:
 
