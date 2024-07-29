@@ -20,10 +20,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: ${{ github.event.inputs.branch }}
-        submodules: true
+      # with:
+      #   fetch-depth: 0
+      #   ref: ${{ github.event.inputs.branch }}
+      #   submodules: true
     
     - name: Set up Git
       run: |
