@@ -32,7 +32,7 @@ jobs:
 
     - name: Set correct environment
       run: |
-        TAG=${{ steps.tag.outputs.tag }}
+        TAG=${{ steps.previoustag.outputs.tag }}
         echo "TAG=$TAG" >> "$GITHUB_ENV"
         echo "$GITHUB_ENV"
 
