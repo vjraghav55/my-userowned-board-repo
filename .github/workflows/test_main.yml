@@ -10,6 +10,7 @@ on:
         options:
           - main
           - feature
+          - feature-test
 
 jobs:
   tag-dispatch:
