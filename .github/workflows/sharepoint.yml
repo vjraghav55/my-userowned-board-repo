@@ -10,23 +10,20 @@ jobs:
     - name: Cloning repo # This step is required
       uses: actions/checkout@v3
 
-    - name: Download from Sharepoint
-      uses: nicolasiannarilli/action-sharepoint-download@v1.0.0
-      with:
-       site_url: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw??download=1'
-       library_folder: 'My files/Cloudalert.xlsx'
-       target_folder: '${{ github.workspace }}'
-       sharepoint_user: ${{ secrets.SH_USER }}
-       sharepoint_password: ${{ secrets.SH_PASSWORD }}
+    # - name: Download from Sharepoint
+    #   uses: nicolasiannarilli/action-sharepoint-download@v1.0.0
+    #   with:
+    #    site_url: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw??download=1'
+    #    library_folder: 'My files/Cloudalert.xlsx'
+    #    target_folder: '${{ github.workspace }}'
+    #    sharepoint_user: ${{ secrets.SH_USER }}
+    #    sharepoint_password: ${{ secrets.SH_PASSWORD }}
 
        
-    # - name: Download file from SharePoint
-    #   env:
-    #     SHAREPOINT_SITE: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw??download=1'
-    #     SHAREPOINT_FILE_PATH: ${{ secrets.SHAREPOINT_FILE_PATH }}
-    #     USERNAME: ${{ secrets.SHAREPOINT_USERNAME }}
-    #     PASSWORD: ${{ secrets.SHAREPOINT_PASSWORD }}
-    #   run: |
-    #     echo "Downloading file from SharePoint..."
-    #     curl -u $USERNAME:$PASSWORD "$SHAREPOINT_SITE/$SHAREPOINT_FILE_PATH" -o ./downloaded_file
-    #     echo "File downloaded and saved to ./downloaded_file"
+    - name: Download file from SharePoint
+      env:
+        SHAREPOINT_FILE_URL: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw'
+      run: |
+        echo "Downloading file from SharePoint..."
+        curl -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
+        echo "File downloaded and saved to ./downloaded_file"
