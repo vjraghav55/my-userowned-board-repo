@@ -28,4 +28,5 @@ jobs:
         curl -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
         echo "File downloaded and saved to ./downloaded_file"
         ls -lrt
+        chmod u+x .
         cat '${{ github.workspace }}/downloaded_file'
