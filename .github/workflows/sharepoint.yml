@@ -27,4 +27,5 @@ jobs:
         echo "Downloading file from SharePoint..."
         curl -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
         echo "File downloaded and saved to ./downloaded_file"
-        cat ./downloaded_file
+        ls -lrt
+        cat '${{ github.workspace }}/downloaded_file'
