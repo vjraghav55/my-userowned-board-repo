@@ -1,0 +1,20 @@
+name: 'Sharepoint release'
+
+on: [workflow_dispatch]
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Cloning repo # This step is required
+      uses: actions/checkout@v3
+
+    - name: Download from Sharepoint
+      uses: nicolasiannarilli/action-sharepoint-download@v1.0.0
+      with:
+       site_url: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/'
+       library_folder: 'My files/Cloudalert.xlsx'
+       target_folder: '${{ github.workspace }}'
+       sharepoint_user: ${{ secrets.SH_USER }}
+       sharepoint_password: ${{ secrets.SH_PASSWORD }}
