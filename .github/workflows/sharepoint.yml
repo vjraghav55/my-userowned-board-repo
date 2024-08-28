@@ -7,15 +7,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cloning repo # This step is required
+    - name: Cloning repo
       uses: actions/checkout@v3
+
+    - name: Get SharePoint Access Token
+      id: get_token
+      env:
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        TENANT_ID: ${{ secrets.TENANT_ID }}
+      run: |
+        TOKEN_ENDPOINT="https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token"
+
+        ACCESS_TOKEN=$(curl -X POST -d \
+          "client_id=${CLIENT_ID}&scope=https://graph.microsoft.com/.default&client_secret=${CLIENT_SECRET}&grant_type=client_credentials" \
+          $TOKEN_ENDPOINT | jq -r .access_token)
+
+        echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
     - name: Download file from SharePoint
       env:
-        SHAREPOINT_FILE_URL: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw?download=1'
+        SHAREPOINT_FILE_URL: 'https://trumio-my.sharepoint.com/:u:/g/personal/infant_rex_trumio_ai/EQrNCykWxeRPthgOtz8NXjQBK4qC5WVU1WsQUtrgKj76Sw?e=qywEhb'
+        ACCESS_TOKEN: ${{ env.ACCESS_TOKEN }}
       run: |
         echo "Downloading file from SharePoint..."
-        curl -v -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
+        curl -v -L -H "Authorization: Bearer $ACCESS_TOKEN" "$SHAREPOINT_FILE_URL" -o ./downloaded_file
         echo "File downloaded and saved to ./downloaded_file"
         ls -lrt
         if [ -s ./downloaded_file ]; then
