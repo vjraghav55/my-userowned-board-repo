@@ -15,7 +15,7 @@ jobs:
         SHAREPOINT_FILE_URL: 'https://sysforetech-my.sharepoint.com/:x:/g/personal/vijayaraghavan_s_sysfore_com/EXDr_JoZAadGhrqD-Ds9vU8BcTRp1gyTCDlPAqiTVCTuOw?download=1'
       run: |
         echo "Downloading file from SharePoint..."
-        curl -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
+        curl -v -L "$SHAREPOINT_FILE_URL" -o ./downloaded_file
         echo "File downloaded and saved to ./downloaded_file"
         ls -lrt
         if [ -s ./downloaded_file ]; then
