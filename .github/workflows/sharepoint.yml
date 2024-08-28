@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cloning repo
+    - name: Cloning repo # This step is required
       uses: actions/checkout@v3
 
     - name: Get SharePoint Access Token
@@ -18,25 +18,21 @@ jobs:
         TENANT_ID: ${{ secrets.TENANT_ID }}
       run: |
         TOKEN_ENDPOINT="https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token"
-
         ACCESS_TOKEN=$(curl -X POST -d \
           "client_id=${CLIENT_ID}&scope=https://graph.microsoft.com/.default&client_secret=${CLIENT_SECRET}&grant_type=client_credentials" \
           $TOKEN_ENDPOINT | jq -r .access_token)
-
-        echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+        echo "::set-output name=token::$ACCESS_TOKEN"
 
     - name: Download file from SharePoint
+      id: download_file
       env:
         SHAREPOINT_FILE_URL: 'https://trumio-my.sharepoint.com/:u:/g/personal/infant_rex_trumio_ai/EQrNCykWxeRPthgOtz8NXjQBK4qC5WVU1WsQUtrgKj76Sw?e=qywEhb'
-        ACCESS_TOKEN: ${{ env.ACCESS_TOKEN }}
+        ACCESS_TOKEN: ${{ steps.get_token.outputs.token }}
       run: |
         echo "Downloading file from SharePoint..."
         curl -v -L -H "Authorization: Bearer $ACCESS_TOKEN" "$SHAREPOINT_FILE_URL" -o ./downloaded_file
+        echo "HTTP Response Code: $(curl -o /dev/null -s -w "%{http_code}\n" -L -H "Authorization: Bearer $ACCESS_TOKEN" "$SHAREPOINT_FILE_URL")"
         echo "File downloaded and saved to ./downloaded_file"
+        file ./downloaded_file
         ls -lrt
-        if [ -s ./downloaded_file ]; then
-          echo "Reading file content..."
-          cat ./downloaded_file
-        else
-          echo "File is empty or download failed."
-        fi
+        head -n 20 ./downloaded_file
