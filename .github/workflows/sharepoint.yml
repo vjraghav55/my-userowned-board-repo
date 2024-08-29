@@ -38,7 +38,7 @@ jobs:
       id: get_download_url
       run: |
           file_response=$(curl -H "Authorization: Bearer ${{ env.token }}" \
-          "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}")
+          "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/env-uat")
           echo "File response: $file_response"
           download_url=$(echo $file_response | jq -r '."@microsoft.graph.downloadUrl"')
           echo "Download URL: $download_url"
