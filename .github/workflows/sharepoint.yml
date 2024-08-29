@@ -39,15 +39,21 @@ jobs:
       run: |
         file_response=$(curl -H "Authorization: Bearer ${{ env.token }}" \
         "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}")
-        echo "download_url=$(echo $file_response | jq -r '.@microsoft.graph.downloadUrl')" >> $GITHUB_ENV
-
+        echo "File response: $file_response"
+        download_url=$(echo $file_response | jq -r '.@microsoft.graph.downloadUrl')
+        echo "Download URL: $download_url"
+        echo "download_url=$download_url" >> $GITHUB_ENV
+    
     - name: Display Download URL
       run: |
-        echo "Download URL:"
-        echo "${{ env.download_url }}"
-
+        echo "Download URL: ${{ env.download_url }}"
+    
     - name: Download file from SharePoint
       run: |
+        if [ -z "${{ env.download_url }}" ]; then
+          echo "Error: Download URL is empty"
+          exit 1
+        fi
         curl -L "${{ env.download_url }}" --output fetched_file
         echo "File downloaded successfully."
 
