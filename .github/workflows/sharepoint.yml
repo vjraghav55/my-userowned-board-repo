@@ -34,15 +34,25 @@ jobs:
           echo "Site ID:"
           echo "${{ env.site_id }}"
 
-    - name: Fetch file from SharePoint
+    - name: Fetch download URL from SharePoint
+      id: get_download_url
       run: |
-          curl -H "Authorization: Bearer ${{ env.token }}" \
-          "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}:/content" \
-          --output fetched_file
-          echo "File fetched successfully."
+          file_response=$(curl -H "Authorization: Bearer ${{ env.token }}" \
+          "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}")
+          echo "download_url=$(echo $file_response | jq -r '["@microsoft.graph.downloadUrl"]')" >> $GITHUB_ENV
+
+    - name: Display Download URL
+      run: |
+        echo "Download URL:"
+        echo "${{ env.download_url }}"
+
+    - name: Download file from SharePoint
+      run: |
+        curl -L "${{ env.download_url }}" --output fetched_file
+        echo "File downloaded successfully."
 
     - name: Upload fetched file as artifact
       uses: actions/upload-artifact@v3
       with:
-          name: fetched_file
-          path: fetched_file
+        name: fetched_file
+        path: fetched_file
