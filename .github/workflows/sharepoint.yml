@@ -37,9 +37,9 @@ jobs:
     - name: Fetch download URL from SharePoint
       id: get_download_url
       run: |
-          file_response=$(curl -H "Authorization: Bearer ${{ env.token }}" \
-          "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}")
-          echo "download_url=$(echo $file_response | jq -r '["@microsoft.graph.downloadUrl"]')" >> $GITHUB_ENV
+        file_response=$(curl -H "Authorization: Bearer ${{ env.token }}" \
+        "https://graph.microsoft.com/v1.0/sites/${{ env.site_id }}/drive/root:/${{ env.FILENAME }}")
+        echo "download_url=$(echo $file_response | jq -r '.@microsoft.graph.downloadUrl')" >> $GITHUB_ENV
 
     - name: Display Download URL
       run: |
